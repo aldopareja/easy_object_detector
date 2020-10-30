@@ -1,0 +1,1 @@
+from easy_detector.utils import istarmap_tqdm_patch
