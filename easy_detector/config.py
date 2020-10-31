@@ -5,7 +5,7 @@ from detectron2.config import get_cfg as detectron_get_cfg
 from detectron2.model_zoo import model_zoo
 
 
-def get_cfg(model_weights_path: Path = None, output_path: Path = None, debug: bool = True):
+def get_cfg(model_weights_path: Path = None, output_path: Path = None, debug: bool = True, num_input_channels: int=1):
     cfg = detectron_get_cfg()
     cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml"))
     if model_weights_path is None:
@@ -33,7 +33,7 @@ def get_cfg(model_weights_path: Path = None, output_path: Path = None, debug: bo
     cfg.TEST.EVAL_PERIOD = 30 if debug else 3000
 
     cfg.INPUT.MASK_FORMAT = "bitmask"
-    cfg.INPUT.FORMAT = "D" #TODO: this is data depending, need to infer it
+    cfg.INPUT.FORMAT = "D" * num_input_channels
     cfg.MIN_AREA = 100
 
     cfg.DATASETS.TRAIN = ("val",) if debug else ("train",)

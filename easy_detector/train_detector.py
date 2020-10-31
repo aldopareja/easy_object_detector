@@ -25,7 +25,7 @@ def parse_args():
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--input_data', type=str)
     parser.add_argument('--remove_cache', action='store_true')
-
+    parser.add_argument('--num_input_channels', type=int)
     return parser.parse_args()
 
 def default_setup(cfg, args):
@@ -72,7 +72,8 @@ def default_setup(cfg, args):
 def main(args):
     # import ipdb
     # ipdb.set_trace()
-    cfg = get_cfg(model_weights_path=Path(args.model_weights),output_path=Path(args.output_dir),debug=args.debug)
+    cfg = get_cfg(model_weights_path=Path(args.model_weights),output_path=Path(args.output_dir),
+                  debug=args.debug, num_input_channels=args.num_input_channels)
     default_setup(cfg, args)
     raw_to_detectron(Path(args.input_data), args.remove_cache, cfg)
     trainer = CustomDetectTrainer(cfg)
