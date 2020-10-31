@@ -39,7 +39,7 @@ The names of the files in `inputs` anh `masks` should be the same for correspond
 
 `masks` should also contain numpy files cotaining 2d uint8 arrays (Height, Width) where the number of unique values in the array correspond to the number of objects in the frame. the set of elements with the same value comprises the segmentation mask of that particular object. The value 0 will be ignored and should be used for background or anything else not required to be detected.
 
-  
+ the validation set should be as close as possible to test conditions and not be more than 7000 images or the evaluation could take too long.
 ## Training
 
 ```
@@ -50,6 +50,7 @@ options:
 - `--model_weights`: file path pointing to o `.pth` file containing a trained model. If none, a pretrained model on coco_instance_segmentation is used
 - `--remove_cache`: recomputes a processed dataset (saved in `./tmp`) and removed any previously computed one
 - `--distributed`: uses all available GPUs in the machine to speed up training
+- `--num_input_channels`: the number of channels per image/array, default 1
 
 ### trainig configuration
 
