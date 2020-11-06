@@ -1,5 +1,6 @@
 import copy
 import os
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -7,24 +8,16 @@ from detectron2.data import build_detection_train_loader, build_detection_test_l
 from detectron2.engine import DefaultTrainer
 from detectron2.evaluation import COCOEvaluator
 
+from easy_detector.utils.io import load_input
+
 
 class DetectionMapper():
     # def __init__(self, cfg):
     #     self.use_dept = cfg.USE_DEPTH
     def __call__(self, dataset_dict):
         dataset_dict = copy.deepcopy(dataset_dict)
-        dataset_dict['image'] = torch.FloatTensor(np.load(dataset_dict['file_name']))
-        # Implement a mapper, similar to the default DatasetMapper, but with your own customizations
-        # dataset_dict = copy.deepcopy(dataset_dict)  # it will be modified by code below
-        # img = read_image(dataset_dict["file_name"])
-        # if self.use_dept:
-        #     img = torch.FloatTensor(1 / (1 + img))
-        #     dataset_dict["image"] = img.unsqueeze(dim=0)
-        # else:
-        #     img = torch.FloatTensor(img)/255.0
-        #     dataset_dict["image"] = img
-        # img = torch.FloatTensor(1 / (1 + img)) if self.use_dept else torch.FloatTensor(img)
-        # dataset_dict["image"] = img.unsqueeze(dim=0)
+        # dataset_dict['image'] = torch.FloatTensor(np.load(dataset_dict['file_name']))
+        dataset_dict['image'] = load_input(dataset_dict['file_name'])
         image_shape = (dataset_dict["height"], dataset_dict["width"])
 
         annos = dataset_dict["annotations"]

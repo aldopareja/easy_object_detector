@@ -13,16 +13,16 @@ from detectron2.data import DatasetCatalog, MetadataCatalog
 from detectron2.structures import BoxMode
 
 from easy_detector.utils.data_utils import get_data_dicts
-from easy_detector.utils.io import write_serialized
+from easy_detector.utils.io import write_serialized, load_mask
 from easy_detector.utils.istarmap_tqdm_patch import array_apply
 
 
-def process_frame(input_file: Path, masks_file, min_area):
+def process_frame(input_file: Path, masks_file: Path, min_area):
     frame = {}
-    masks = np.load(masks_file)
+    masks = load_mask(masks_file)
 
     frame['file_name'] = str(input_file)
-    frame['image_id'] = int(re.sub('[^0-9]', '', input_file.name))
+    frame['image_id'] = int(re.sub('[^0-9]', '', input_file.name.split('.')[0]))
     frame['height'], frame['width'] = map(int, masks.shape)
 
     objs = []
@@ -33,7 +33,7 @@ def process_frame(input_file: Path, masks_file, min_area):
         if obj_mask.sum() > min_area:
             mask_x, mask_y = obj_mask.nonzero()
             bbox = list(map(int, [mask_x.min(), mask_y.min(), mask_x.max(), mask_y.max()]))
-            if bbox[3] <= bbox[1] + 2 and bbox[2] <= bbox[0] + 2: #width and height shouldn't be too small
+            if bbox[3] <= bbox[1] + 2 and bbox[2] <= bbox[0] + 2:  # width and height shouldn't be too small
                 continue
             encoded_mask = pycocotools.mask.encode(np.asarray(obj_mask, order="F"))
             encoded_mask["counts"] = encoded_mask["counts"].decode('ascii')
@@ -47,26 +47,26 @@ def process_frame(input_file: Path, masks_file, min_area):
 
 
 def raw_to_detectron(data_path: Path, remove_cache: bool, cfg: CfgNode):
-
     data_splits = ['val']
     data_splits += ['train'] if not cfg.DEBUG else []
     for name in data_splits:
         coco_path = Path('.') / 'tmp' / ('coco_' + name + '.json')
 
-        if (remove_cache or not coco_path.exists()) and comm.is_main_process() :
+        if (remove_cache or not coco_path.exists()) and comm.is_main_process():
             input_files = [data_path / name / 'inputs' / a for a in (data_path / name / 'inputs').iterdir()]
             mask_files = [data_path / name / 'masks' / a for a in (data_path / name / 'masks').iterdir()]
             shutil.rmtree(coco_path, ignore_errors=True)
             coco_path.parent.mkdir(parents=True, exist_ok=True)
             frame_objects = array_apply(process_frame, zip(input_files, mask_files, repeat(cfg.MIN_AREA)),
-                                        parallel=True,
+                                        parallel = True,
                                         total=len(input_files),
                                         chunksize=1000)
             write_serialized(frame_objects, coco_path)
 
         DatasetCatalog.register(name, lambda d=coco_path: get_data_dicts(d))
         MetadataCatalog.get(name).set(thing_classes=['object'])
-    #TODO: do we need to set json_file as well?, might not be necessary
+    # TODO: do we need to set json_file as well?, might not be necessary
+
 
 if __name__ == "__main__":
     from detectron2.config import get_cfg

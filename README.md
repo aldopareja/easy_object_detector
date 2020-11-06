@@ -35,11 +35,11 @@ In general your data folder must have a structure like this:
 
 The names of the files in `inputs` anh `masks` should be the same for corresponding input-masks pairs. It should be an integer-castable name (excluding the extension).
 
-`inputs` should contain numpy (.npy) files containing 3d arrays (Channels, Height, Width) of the processed required inputs. In the case of intphys these are single channel arrays where each pixel represents `1/(1+d)` where d is the depth of the pixel in meters.
+`inputs` should contain numpy (.npy) files containing 3d arrays (Channels, Height, Width) of the processed required inputs the values in these arrays should be between 0 and 1. In the case of intphys these are single channel arrays where each pixel represents `1/(1+d)` where d is the depth of the pixel in meters. Now it also supports `.hkl` files, which are created with the [ `hickle` library ](https://github.com/telegraphic/hickle). 
 
-`masks` should also contain numpy files cotaining 2d uint8 arrays (Height, Width) where the number of unique values in the array correspond to the number of objects in the frame. the set of elements with the same value comprises the segmentation mask of that particular object. The value 0 will be ignored and should be used for background or anything else not required to be detected.
+`masks` should also contain numpy files cotaining 2d uint8 arrays (Height, Width) where the number of unique values in the array correspond to the number of objects in the frame. the set of elements with the same value comprises the segmentation mask of that particular object. The value 0 will be ignored and should be used for background or anything else not required to be detected. It also supports `.png` files for masks which can be saved using [ `PIL` ](https://pillow.readthedocs.io/en/5.1.x/handbook/tutorial.html#tutorial)
 
- the validation set should be as close as possible to test conditions and not be more than 7000 images or the evaluation could take too long.
+ the validation set should be as close as possible to test conditions and not be more than 7000 images or the evaluation could take too long to train.
 ## Training
 
 ```

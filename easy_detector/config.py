@@ -34,6 +34,8 @@ def get_cfg(model_weights_path: Path = None, output_path: Path = None, debug: bo
 
     cfg.INPUT.MASK_FORMAT = "bitmask"
     cfg.INPUT.FORMAT = "D" * num_input_channels
+    cfg.MODEL.PIXEL_MEAN = [0.5] * num_input_channels
+    cfg.MODEL.PIXEL_STD = [1.0] * num_input_channels
     cfg.MIN_AREA = 100
 
     cfg.DATASETS.TRAIN = ("val",) if debug else ("train",)

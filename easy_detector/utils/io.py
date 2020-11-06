@@ -1,7 +1,11 @@
 import json
 from pathlib import Path
 
+import numpy as np
+import torch
 import yaml
+from PIL import Image
+import hickle as hkl
 
 from detectron2.config import CfgNode
 
@@ -29,3 +33,23 @@ def load_cfg_from_file(cfg_file):
         cfg = yaml.load(f)
     cfg = CfgNode(cfg)
     return cfg
+
+def load_mask(mask_path: Path):
+    ext = mask_path.suffix
+    if ext == '.npy':
+        return np.load(mask_path)
+    elif ext == '.png':
+        return np.array(Image.open(mask_path))
+    else:
+        raise NotImplementedError
+
+def load_input(input_path: Path):
+    ext = input_path.suffix
+    if ext == '.npy':
+        input = np.load(input_path)
+    elif ext == '.hkl':
+        input = hkl.load(str(input_path))
+    else:
+        raise NotImplementedError
+
+    return torch.FloatTensor(input)
