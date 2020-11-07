@@ -1,12 +1,16 @@
 # Process MCS for detection
 
-## install MCS 0.3.2
+## install MCS 0.3.3
 
 Recommended to install in a conda environment or virtualenv
 
 ```
 pip install git+https://github.com/NextCenturyCorporation/MCS@latest#egg=machine_common_sense
 ```
+
+## download data and everything else
+
+
 
 ## remote rendering
 

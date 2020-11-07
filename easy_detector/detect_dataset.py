@@ -40,7 +40,8 @@ def process_frame(input_file: Path, masks_file: Path, min_area):
             objs.append({"bbox": bbox,
                          "bbox_mode": int(BoxMode.XYXY_ABS),
                          "segmentation": encoded_mask,
-                         "category_id": 0})
+                         "category_id": 0,
+                         "iscrowd": 0})
 
     frame["annotations"] = objs
     return frame
@@ -53,8 +54,8 @@ def raw_to_detectron(data_path: Path, remove_cache: bool, cfg: CfgNode):
         coco_path = Path('.') / 'tmp' / ('coco_' + name + '.json')
 
         if (remove_cache or not coco_path.exists()) and comm.is_main_process():
-            input_files = [data_path / name / 'inputs' / a for a in (data_path / name / 'inputs').iterdir()]
-            mask_files = [data_path / name / 'masks' / a for a in (data_path / name / 'masks').iterdir()]
+            input_files = [a for a in (data_path / name / 'inputs').iterdir()]
+            mask_files = [a for a in (data_path / name / 'masks').iterdir()]
             shutil.rmtree(coco_path, ignore_errors=True)
             coco_path.parent.mkdir(parents=True, exist_ok=True)
             frame_objects = array_apply(process_frame, zip(input_files, mask_files, repeat(cfg.MIN_AREA)),

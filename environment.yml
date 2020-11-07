@@ -1,0 +1,15 @@
+name: detector
+channels:
+  - defaults
+  - pytorch
+dependencies:
+  - pytorch==1.6.0
+  - torchvision==0.7.0
+  - python==3.8.5
+  - pip:
+      - h5py==2.10.0
+      - hickle==4.0.1
+      - opencv-python==4.4.0.44
+      - git+https://github.com/facebookresearch/detectron2.git@v0.3
+      - ipdb==0.13.4
+      - git+https://github.com/NextCenturyCorporation/MCS@0.3.3
