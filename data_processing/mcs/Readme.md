@@ -10,7 +10,17 @@ pip install git+https://github.com/NextCenturyCorporation/MCS@latest#egg=machine
 
 ## download data and everything else
 
+```
+wget https://github.com/NextCenturyCorporation/MCS/releases/download/0.3.3/MCS-AI2-THOR-Unity-App-v0.3.3.x86_64
+wget https://github.com/NextCenturyCorporation/MCS/releases/download/0.3.3/MCS-AI2-THOR-Unity-App-v0.3.3_Data.tar.gz
+tar -xzvf MCS-AI2-THOR-Unity-App-v0.3.3_Data.tar.gz
+chmod a+x MCS-AI2-THOR-Unity-App-v0.3.3.x86_64
 
+wget https://evaluation-training-scenes.s3.amazonaws.com/eval3/training-passive-physics.zip
+sudo apt-get install unzip
+unzip training-passive-physics.zip
+
+```
 
 ## remote rendering
 
