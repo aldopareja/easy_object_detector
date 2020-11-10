@@ -84,7 +84,7 @@ def dump_for_detectron(step_data, out_path, index):
 
     if DEBUG:
         frame_dict = process_frame(input_to_file, mask_file, 100)
-        visualize_data_dict(frame_dict, 'erase.png')
+        visualize_data_dict(frame_dict, Path('erase.png'))
 
 
 def process_scene(controller, scene_path, output_path, vid_index, concurrent, tp: ThreadPoolExecutor):
