@@ -8,6 +8,9 @@ import random
 
 from machine_common_sense import Controller
 
+from easy_detector.detect_dataset import process_frame
+from easy_detector.utils.visualize import visualize_data_dict
+
 sys.path.insert(0, './')
 from easy_detector.utils.istarmap_tqdm_patch import array_apply
 
@@ -39,6 +42,7 @@ def parse_args():
     args.output_dir = Path(args.output_dir)
     return args
 
+DEBUG = True
 
 def dump_for_detectron(step_data, out_path, index):
     # print(step_data)
@@ -46,7 +50,7 @@ def dump_for_detectron(step_data, out_path, index):
     depth = 1 / (1 + depth)
     rgb = np.array(step_data.image_list[0], dtype=np.float32) / 255.0
     input = np.concatenate([rgb, depth[..., np.newaxis]], axis=2)
-    input = input.swapaxes(2, 0)
+    input = input.swapaxes(2, 0).swapaxes(1, 2) # now it is C, H, W
 
     masks = np.array(step_data.object_mask_list[0])
     masks = masks[:, :, 0] + masks[:, :, 1] * 256 + masks[:, :, 2] * 256 ** 2
@@ -77,6 +81,10 @@ def dump_for_detectron(step_data, out_path, index):
 
     mask_file = out_path / 'masks' / (str(index).zfill(9) + '.png')
     Image.fromarray(out_mask).save(str(mask_file))
+
+    if DEBUG:
+        frame_dict = process_frame(input_to_file, mask_file, 100)
+        visualize_data_dict(frame_dict, 'erase.png')
 
 
 def process_scene(controller, scene_path, output_path, vid_index, concurrent, tp: ThreadPoolExecutor):

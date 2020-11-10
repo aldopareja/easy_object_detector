@@ -44,6 +44,8 @@ def load_mask(mask_path: Path):
         raise NotImplementedError
 
 def load_input(input_path: Path):
+    if not isinstance(input_path,Path):
+        input_path = Path(input_path)
     ext = input_path.suffix
     if ext == '.npy':
         input = np.load(input_path)

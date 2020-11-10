@@ -31,6 +31,8 @@ def main(args):
     if args.debug and not args.distributed:
         import ipdb
         ipdb.set_trace()
+    if not args.resume:
+        shutil.rmtree(args.output_dir, ignore_errors=True)
 
     cfg = get_cfg(model_weights_path=Path(args.model_weights) if args.model_weights is not None else None,
                   output_path=Path(args.output_dir),
@@ -39,8 +41,7 @@ def main(args):
     default_setup(cfg, args)
     raw_to_detectron(Path(args.input_data), args.remove_cache, cfg)
     trainer = CustomDetectTrainer(cfg)
-    if not args.resume:
-        shutil.rmtree(cfg.OUTPUT_DIR)
+
     # resume = args.model_weights is not None
     trainer.resume_or_load(args.resume)
     trainer.train()

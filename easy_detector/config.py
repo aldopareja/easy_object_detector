@@ -18,7 +18,7 @@ def get_cfg(model_weights_path: Path = None, output_path: Path = None, debug: bo
     cfg.OUTPUT_DIR = str(output_path) if output_path is not None else './output'
     Path(cfg.OUTPUT_DIR).mkdir(exist_ok=True)
 
-    cfg.DATALOADER.NUM_WORKERS = 0 if debug else 4
+    cfg.DATALOADER.NUM_WORKERS = 0 if debug else 6
 
     cfg.SOLVER.WARMUP_FACTOR = 1.0 / 500
     cfg.SOLVER.WARMUP_ITERS = 500 # a warm up is necessary to avoid diverging training while keeping the goal learning rate as high as possible

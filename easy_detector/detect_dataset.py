@@ -13,9 +13,11 @@ from detectron2.data import DatasetCatalog, MetadataCatalog
 from detectron2.structures import BoxMode
 
 from easy_detector.utils.data_utils import get_data_dicts
-from easy_detector.utils.io import write_serialized, load_mask
+from easy_detector.utils.io import write_serialized, load_mask, load_input
 from easy_detector.utils.istarmap_tqdm_patch import array_apply
+from easy_detector.utils.visualize import visualize_data_dict
 
+DEBUG = False
 
 def process_frame(input_file: Path, masks_file: Path, min_area):
     frame = {}
@@ -31,7 +33,7 @@ def process_frame(input_file: Path, masks_file: Path, min_area):
             continue
         obj_mask = masks == m_id
         if obj_mask.sum() > min_area:
-            mask_x, mask_y = obj_mask.nonzero()
+            mask_y, mask_x = obj_mask.nonzero()
             bbox = list(map(int, [mask_x.min(), mask_y.min(), mask_x.max(), mask_y.max()]))
             if bbox[3] <= bbox[1] + 2 and bbox[2] <= bbox[0] + 2:  # width and height shouldn't be too small
                 continue
@@ -44,6 +46,8 @@ def process_frame(input_file: Path, masks_file: Path, min_area):
                          "iscrowd": 0})
 
     frame["annotations"] = objs
+    if DEBUG:
+        visualize_data_dict(frame, save_path=Path('erase.png')) #TODO: remove
     return frame
 
 
@@ -55,11 +59,14 @@ def raw_to_detectron(data_path: Path, remove_cache: bool, cfg: CfgNode):
 
         if (remove_cache or not coco_path.exists()) and comm.is_main_process():
             input_files = [a for a in (data_path / name / 'inputs').iterdir()]
-            mask_files = [a for a in (data_path / name / 'masks').iterdir()]
+            # mask_files = [a for a in (data_path / name / 'masks').iterdir()]
+            mask_ext = next((data_path / name / 'masks').iterdir()).name.split('.')[1]
+            mask_files = [a.parent.parent / 'masks' / (a.name.split('.')[0] + '.' + mask_ext)
+                          for a in input_files]
             shutil.rmtree(coco_path, ignore_errors=True)
             coco_path.parent.mkdir(parents=True, exist_ok=True)
             frame_objects = array_apply(process_frame, zip(input_files, mask_files, repeat(cfg.MIN_AREA)),
-                                        parallel = True,
+                                        parallel = not DEBUG,
                                         total=len(input_files),
                                         chunksize=1000)
             write_serialized(frame_objects, coco_path)
