@@ -6,20 +6,16 @@ import shutil
 import sys
 import random
 
-from machine_common_sense import Controller
 
 from easy_detector.detect_dataset import process_frame
 from easy_detector.utils.visualize import visualize_data_dict
 
 sys.path.insert(0, './')
-from easy_detector.utils.istarmap_tqdm_patch import array_apply
 
 import argparse
 from pathlib import Path
-from time import sleep
 from itertools import repeat
 
-import h5py
 import machine_common_sense as mcs
 import numpy as np
 from PIL import Image
@@ -28,6 +24,7 @@ import hickle as hkl
 from multiprocessing import Process, Queue, cpu_count, Manager
 from concurrent.futures import ThreadPoolExecutor
 
+DEBUG = True
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -42,7 +39,6 @@ def parse_args():
     args.output_dir = Path(args.output_dir)
     return args
 
-DEBUG = True
 
 def dump_for_detectron(step_data, out_path, index):
     # print(step_data)
@@ -84,7 +80,7 @@ def dump_for_detectron(step_data, out_path, index):
 
     if DEBUG:
         frame_dict = process_frame(input_to_file, mask_file, 100)
-        visualize_data_dict(frame_dict, Path('erase.png'))
+        visualize_data_dict(frame_dict, 'tmp_mcs_images'/Path(str(index).zfill(9) + '.png'))
 
 
 def process_scene(controller, scene_path, output_path, vid_index, concurrent, tp: ThreadPoolExecutor):
@@ -160,6 +156,10 @@ if __name__ == "__main__":
     w_args = [(s, e, o, i) for i, (s, e, o) in enumerate(zip(scene_files,
                                                              repeat(args.mcs_executable),
                                                              repeat(training_path)))]
+
+    if DEBUG:
+        shutil.rmtree('tmp_mcs_images', ignore_errors=True)
+        Path('tmp_mcs_images').mkdir()
 
     if args.num_parallel_controllers > 0:
         work_queue = Queue()

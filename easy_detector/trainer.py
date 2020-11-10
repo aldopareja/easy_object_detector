@@ -11,19 +11,18 @@ from detectron2.evaluation import COCOEvaluator
 from easy_detector.utils.io import load_input
 from easy_detector.utils.visualize import visualize_data_dict
 
+DEBUG = False
 
 class DetectionMapper():
-    # def __init__(self, cfg):
-    #     self.use_dept = cfg.USE_DEPTH
     def __call__(self, dataset_dict):
-        visualize_data_dict(dataset_dict, save_path=Path('erase.png'))
+        if DEBUG:
+            visualize_data_dict(dataset_dict, save_path=Path('erase.png'))
+
         dataset_dict = copy.deepcopy(dataset_dict)
-        # dataset_dict['image'] = torch.FloatTensor(np.load(dataset_dict['file_name']))
         dataset_dict['image'] = load_input(dataset_dict['file_name'])
         image_shape = (dataset_dict["height"], dataset_dict["width"])
 
         annos = dataset_dict["annotations"]
-        # annos = filter_non_coco_annotations(annos)
         instances = detection_utils.annotations_to_instances(annos, image_shape, mask_format="bitmask")
         dataset_dict["instances"] = instances
         return dataset_dict

@@ -47,7 +47,7 @@ def process_frame(input_file: Path, masks_file: Path, min_area):
 
     frame["annotations"] = objs
     if DEBUG:
-        visualize_data_dict(frame, save_path=Path('erase.png')) #TODO: remove
+        visualize_data_dict(frame, save_path=Path('erase.png'), channels=(3,)) #TODO: remove
     return frame
 
 
@@ -66,7 +66,7 @@ def raw_to_detectron(data_path: Path, remove_cache: bool, cfg: CfgNode):
             shutil.rmtree(coco_path, ignore_errors=True)
             coco_path.parent.mkdir(parents=True, exist_ok=True)
             frame_objects = array_apply(process_frame, zip(input_files, mask_files, repeat(cfg.MIN_AREA)),
-                                        parallel = not DEBUG,
+                                        parallel=not DEBUG,
                                         total=len(input_files),
                                         chunksize=1000)
             write_serialized(frame_objects, coco_path)
