@@ -9,6 +9,7 @@ For now these are the steps I followed to make it work, please refer to [detectr
 ```
 sudo apt-get install ninja-build
 pip install torch torchvision opencv-python tensorboard
+pip install hickle
 pip install  'git+https://github.com/facebookresearch/fvcore'
 pip install 'git+https://github.com/facebookresearch/detectron2.git'
 ```
@@ -43,7 +44,7 @@ The names of the files in `inputs` anh `masks` should be the same for correspond
 ## Training
 
 ```
- python -m  easy_detector.train_detector --output_dir ./output  --input_data ./example_data/ --distributed
+ python -m  easy_detector.train_detector --output_dir ./output  --input_data ./example_data/ --distributed --num_input_channels 1
 ```
 
 options:
