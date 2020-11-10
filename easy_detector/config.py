@@ -7,9 +7,11 @@ from detectron2.model_zoo import model_zoo
 
 def get_cfg(model_weights_path: Path = None, output_path: Path = None, debug: bool = True, num_input_channels: int=1):
     cfg = detectron_get_cfg()
-    cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml"))
+    cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
+    # cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml"))
     if model_weights_path is None:
-        cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml")
+        # cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_X_101_32x8d_FPN_3x.yaml")
+        cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
     else:
         cfg.MODEL.WEIGHTS = str(model_weights_path)
 
@@ -24,7 +26,7 @@ def get_cfg(model_weights_path: Path = None, output_path: Path = None, debug: bo
     cfg.SOLVER.BASE_LR = 0.0005  # pick a good LR
     cfg.SOLVER.MAX_ITER = 80000
     cfg.SOLVER.STEPS = (40000, 60000, 70000)
-    cfg.SOLVER.GAMMA = 0.3 # after each milestone in SOLVER.STEPS gets reached, the learning rate gets scaled by Gamma.
+    cfg.SOLVER.GAMMA = 0.5 # after each milestone in SOLVER.STEPS gets reached, the learning rate gets scaled by Gamma.
 
     cfg.SOLVER.CHECKPOINT_PERIOD = 50 if debug else 3000 #5000
     

@@ -66,6 +66,7 @@ def raw_to_detectron(data_path: Path, remove_cache: bool, cfg: CfgNode):
 
         DatasetCatalog.register(name, lambda d=coco_path: get_data_dicts(d))
         MetadataCatalog.get(name).set(thing_classes=['object'])
+    comm.synchronize()
     # TODO: do we need to set json_file as well?, might not be necessary
 
 

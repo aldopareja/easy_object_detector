@@ -57,7 +57,8 @@ GPU #0:
   UUID      : GPU-d03a3d49-0641-40c9-30f2-5c3e4bdad498
   PCI BusID : PCI:0:23:0
 # create the xserver configuration
-$ sudo nvidia-xconfig --user-display-device=None --virtual=600x400 --output-xconfig=/etx/X11/xorg.conf --busid=PCI:0:23:0
+$ sudo nvidia-xconfig --no-use-display-device --virtual=600x400 --output-xconfig=/etc/X11/xorg.conf --busid=PCI:0:6:0
 # launch Xserver
 $ sudo /usr/bin/Xorg :0 &
 ```
+wD7UUzf733HM

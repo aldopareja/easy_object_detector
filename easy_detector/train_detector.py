@@ -1,5 +1,6 @@
 import argparse
 import os
+import shutil
 import sys
 from pathlib import Path
 
@@ -16,6 +17,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output_dir", type=str)
     parser.add_argument('--model_weights', type=str)
+    parser.add_argument('--resume', action='store_true')
     parser.add_argument("--distributed", action='store_true')
     # parser.add_argument("--rank", type=int)
     parser.add_argument('--debug', action='store_true')
@@ -37,8 +39,10 @@ def main(args):
     default_setup(cfg, args)
     raw_to_detectron(Path(args.input_data), args.remove_cache, cfg)
     trainer = CustomDetectTrainer(cfg)
-    if args.model_weights is not None:
-        trainer.resume_or_load()
+    if not args.resume:
+        shutil.rmtree(cfg.OUTPUT_DIR)
+    # resume = args.model_weights is not None
+    trainer.resume_or_load(args.resume)
     trainer.train()
 
 

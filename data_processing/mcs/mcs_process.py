@@ -55,12 +55,19 @@ def dump_for_detectron(step_data, out_path, index):
     out_mask = np.zeros(masks.shape, dtype=np.uint8)
     assert len(out_mask.shape) == 2
 
+    foreground_ids = [e.color['r'] + e.color['g'] * 256 + e.color['b'] * 256 ** 2
+                      for e in  step_data.structural_object_list
+                      if not (e.uuid.startswith('wall')  or e.uuid.startswith('floor'))]
+
+    foreground_ids += [e.color['r'] + e.color['g'] * 256 + e.color['b'] * 256 ** 2
+                      for e in  step_data.object_list]
+
     id = 1
-    for v in np.unique(masks):
+    for v in foreground_ids:
         indices = masks == v
         out_mask[indices] = id
         id += 1
-    assert not (out_mask == 0).any()
+    # assert not (out_mask == 0).any()
 
     input_to_file = out_path / 'inputs' / (str(index).zfill(9) + '.hkl')
     # input_to_file = out_path / 'inputs' / (str(index).zfill(9) + '.npy')
