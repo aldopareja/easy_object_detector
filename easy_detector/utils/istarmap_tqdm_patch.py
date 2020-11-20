@@ -39,6 +39,7 @@ def array_apply(func, args, parallel, cpu_frac=1, use_tqdm=True, chunksize=None,
         for a in progress(args, total=total):
             r = func(*a) if unpack else func(a)
             results.append(r)
+        return results
     else:
         num_processes = cpu_count() // cpu_frac
         chunksize = total // num_processes if chunksize is None else chunksize

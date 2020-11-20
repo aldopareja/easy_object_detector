@@ -1,5 +1,5 @@
 """
-this files uses MCS 0.3.2 and passive intphys scenes and dumps data to train a detector
+this files uses MCS 0.3.3 and passive intphys scenes and dumps data to train a detector
 """
 import os
 import shutil

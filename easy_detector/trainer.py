@@ -13,6 +13,7 @@ from easy_detector.utils.visualize import visualize_data_dict
 
 DEBUG = False
 
+
 class DetectionMapper():
     def __call__(self, dataset_dict):
         if DEBUG:
@@ -27,12 +28,8 @@ class DetectionMapper():
         dataset_dict["instances"] = instances
         return dataset_dict
 
-class CustomDetectTrainer(DefaultTrainer):
-    # def __init__(self,cfg):
-    #     super().__init__(cfg)
-    #     if cfg.RESUME:
-    #         self.resume_or_load(resume=True)
 
+class CustomDetectTrainer(DefaultTrainer):
     @classmethod
     def build_train_loader(cls, cfg):
         return build_detection_train_loader(cfg, DetectionMapper())

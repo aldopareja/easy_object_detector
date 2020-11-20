@@ -59,7 +59,6 @@ def raw_to_detectron(data_path: Path, remove_cache: bool, cfg: CfgNode):
 
         if (remove_cache or not coco_path.exists()) and comm.is_main_process():
             input_files = [a for a in (data_path / name / 'inputs').iterdir()]
-            # mask_files = [a for a in (data_path / name / 'masks').iterdir()]
             mask_ext = next((data_path / name / 'masks').iterdir()).name.split('.')[1]
             mask_files = [a.parent.parent / 'masks' / (a.name.split('.')[0] + '.' + mask_ext)
                           for a in input_files]
