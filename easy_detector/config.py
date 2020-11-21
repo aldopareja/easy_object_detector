@@ -15,6 +15,9 @@ def get_cfg(model_weights_path: Path = None, output_path: Path = None, debug: bo
     else:
         cfg.MODEL.WEIGHTS = str(model_weights_path)
 
+    cfg.MODEL.RESNETS.NORM = "BN"
+    cfg.MODEL.BACKBONE.FREEZE_AT = 0
+
     cfg.OUTPUT_DIR = str(output_path) if output_path is not None else './output'
     Path(cfg.OUTPUT_DIR).mkdir(exist_ok=True)
 

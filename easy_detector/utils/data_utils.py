@@ -7,7 +7,7 @@ from easy_detector.utils.istarmap_tqdm_patch import array_apply
 
 
 def fix_from_serialization(data_dict):
-    data_dict['file_name'] = Path(data_dict['file_name'])
+    data_dict['file_name'] = data_dict['file_name']
     for an in data_dict['annotations']:
         an['bbox_mode'] = BoxMode.XYXY_ABS
         an['segmentation']['counts'] = an['segmentation']['counts'].encode('ascii')
